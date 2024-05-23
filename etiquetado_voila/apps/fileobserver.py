@@ -37,6 +37,8 @@ class FileObserver:
     def file_create(self, filename):
         """
         """
+        if not self.suffix:
+            self._file_create_handlers(self, filename)
         if Path(filename).suffix == self.suffix: # suffix of the textbox
             self._file_create_handlers(self, filename)
 
@@ -48,6 +50,8 @@ class FileObserver:
     def file_deleted(self, filename):
         """
         """
+        if not self.suffix:
+            self._file_delete_handlers(self, filename)
         if Path(filename).suffix == self.suffix: # suffix of the textbox
             self._file_delete_handlers(self, filename)
 

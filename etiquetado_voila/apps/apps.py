@@ -6,6 +6,7 @@ import time
 from pathlib import Path, PurePath
 
 from etiquetado_voila.apps.pieces import ListOptions
+from etiquetado_voila.apps.pieces import ListOptions2
 
 from ipywidgets import widgets, HBox, VBox, Layout
 
@@ -104,7 +105,8 @@ class AutoQuetadoConverter(AutoQuetado):
         outdir_converted="./files/data_converted/",
     ):
         self._converter = converter
-        self.list_options = ListOptions(list_name="Tagged Files")
+        # self.list_options = ListOptions(list_name="Tagged Files")
+
 
         AutoQuetado.__init__(
             self,
@@ -114,18 +116,32 @@ class AutoQuetadoConverter(AutoQuetado):
             template_suffix=template_suffix,
             update_metadata=update_metadata,
         )
+
+        self.list_options = ListOptions2(dir=self.foa.observed_dir,
+                                         suffix=self.foa.suffix,
+                                         file_observer=self.foa,
+                                         widget_name="Tagged Files",
+                                        )
+
         self.outdir_converted = outdir_converted
 
         self.app_output = widgets.Output()
         self.output = widgets.Output()
 
-        self.on_file_created(self.add_tagged_file_option)
+        # self.on_file_created(self.add_tagged_file_option)
+        # self.on_file_deleted(self.remove_tagged_file_option)
 
         self.button_convert_files = widgets.Button(description="Export & convert selected files")
         self.button_convert_files.on_click(self.on_convert_files)
 
-    def add_tagged_file_option(self, _, filename):
-        return self.list_options.add_option(filename)
+    # def on_file_deleted(self, *args, **kwargs):
+    #     return self.foa.on_file_delete(*args, **kwargs)
+
+    # def add_tagged_file_option(self, _, filename):
+    #     return self.list_options.add_option(filename)
+
+    # def remove_tagged_file_option(self, _, filename):
+    #     return self.list_options.remove_option(filename)
 
     def base_converter(self, filename, metadata_suffix, outdir):
         from echemdbconverters.csvloader import CSVloader
@@ -152,8 +168,8 @@ class AutoQuetadoConverter(AutoQuetado):
             self.convert_file(filename=filename)
         # the filenames must be removed from the selector after the conversion
         # otherwise the above loop will break
-        for filename in self.list_options.option_selector.value:
-            self.list_options.remove_option(filename)
+        # for filename in self.list_options.option_selector.value:
+        #     self.list_options.remove_option(filename)
 
     def layout_converter(self):
         return VBox(
